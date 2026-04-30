@@ -182,7 +182,8 @@ async def get_job_result(job_id: str):
 @router.post("/analyze-frame")
 async def analyze_frame(body: dict):
     # TODO: run single-frame analysis via agent
-    return {"status": "not implemented yet"}
+    from fastapi.responses import JSONResponse
+    return JSONResponse(status_code=501, content={"detail": "Single-frame analysis not yet implemented"})
 
 
 @router.post("/jobs/{job_id}/complete", response_model=VideoProcessingResult)

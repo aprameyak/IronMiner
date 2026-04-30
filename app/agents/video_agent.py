@@ -229,7 +229,7 @@ class VideoAgent(BaseAgent):
                         filename=f"chunk_{idx:04d}.mp4",
                     ))
             except Exception:
-                logger.warning("Thumbnail extraction failed, continuing without frames")
+                logger.warning("Thumbnail extraction failed, continuing without frames", exc_info=True)
 
         logger.info("Job %s complete: %d zones, %d frames", job_id, len(zones), len(frame_data_list))
 

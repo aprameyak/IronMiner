@@ -66,4 +66,7 @@ class TeamPlannerAgent(BaseAgent):
 
         # Strip markdown code fences if the model wraps output
         raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip())
-        return json.loads(raw)
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"TeamPlannerAgent returned non-JSON response: {exc}") from exc

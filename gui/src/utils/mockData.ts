@@ -1,0 +1,359 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MOCK DATA — IronSite Manager
+ *
+ * Used as fallback when the backend API is not running.
+ * Each section is labeled and maps directly to an API endpoint response.
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+import type { Site, Alert, FeedConfig, Zone, TimelineEntry } from '../types'
+
+// ── SITES ────────────────────────────────────────────────────────────────────
+export const MOCK_SITES: Site[] = [
+  {
+    id: "s1",
+    name: "Riverside Tower",
+    address: "1400 River Rd, Block C",
+    status: "active",
+    progress: 64,
+    congestion: "high",
+    trades: 5,
+    workers: 23,
+    frames: 142,
+    last_scan: "12 min ago",
+    zones: [
+      { zone: "Zone A — Ground Level West", congestion: 2, trades: ["Concrete"], workers: 4, status: "ok" },
+      { zone: "Zone B — Level 3 East Scaffolding", congestion: 5, trades: ["Electrical", "Plumbing", "Framing"], workers: 9, status: "critical" },
+      { zone: "Zone C — North Exterior", congestion: 3, trades: ["Framing", "Crane Ops"], workers: 6, status: "warning" },
+      { zone: "Zone D — South Parking / Staging", congestion: 1, trades: ["Delivery"], workers: 2, status: "ok" },
+      { zone: "Zone E — Level 2 Interior", congestion: 3, trades: ["HVAC", "Electrical"], workers: 5, status: "warning" },
+    ],
+  },
+  {
+    id: "s2",
+    name: "Harbor Warehouse",
+    address: "Dock 9, Industrial Port",
+    status: "active",
+    progress: 38,
+    congestion: "medium",
+    trades: 3,
+    workers: 14,
+    frames: 87,
+    last_scan: "1 hr ago",
+    zones: [
+      { zone: "Zone A — West Bay", congestion: 2, trades: ["Steel Erection"], workers: 5, status: "ok" },
+      { zone: "Zone B — East Bay", congestion: 3, trades: ["Concrete", "Plumbing"], workers: 6, status: "warning" },
+      { zone: "Zone C — South Access Road", congestion: 4, trades: ["Delivery", "Staging"], workers: 3, status: "critical" },
+    ],
+  },
+  {
+    id: "s3",
+    name: "Oakfield Homes Ph.2",
+    address: "Oakfield Estate, Lots 14-28",
+    status: "review",
+    progress: 91,
+    congestion: "low",
+    trades: 0,
+    workers: 0,
+    frames: 0,
+    last_scan: "—",
+    zones: [],
+  },
+]
+
+
+// ── ALERTS ───────────────────────────────────────────────────────────────────
+export const MOCK_ALERTS: Alert[] = [
+  {
+    id: "a_001",
+    site_id: "s1",
+    site_name: "Riverside Tower",
+    severity: "high",
+    source_agent: "productivity",
+    title: "3 trades stacked in Zone B — east scaffolding",
+    detail: "Electrical, plumbing, and framing crews all working within the same 400 sq ft area on level 3. Movement corridors are blocked by staged conduit. Recommend staggering electrical to afternoon shift.",
+    acknowledged: false,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "a_002",
+    site_id: "s1",
+    site_name: "Riverside Tower",
+    severity: "high",
+    source_agent: "safety",
+    title: "No hard hats detected near crane swing radius",
+    detail: "Two workers in the northeast corner are within the crane's operational radius without visible hard hats. This area had the same issue flagged yesterday.",
+    acknowledged: false,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "a_003",
+    site_id: "s2",
+    site_name: "Harbor Warehouse",
+    severity: "medium",
+    source_agent: "productivity",
+    title: "Material staging blocking vehicle path",
+    detail: "Lumber delivery staged across the main access road on the south side. Prevents equipment from reaching the west bay. Appeared between morning and midday scans.",
+    acknowledged: false,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "a_004",
+    site_id: "s1",
+    site_name: "Riverside Tower",
+    severity: "low",
+    source_agent: "productivity",
+    title: "Formwork removal ahead of schedule — level 1",
+    detail: "Shores on level 1 east deck are 60% removed, ahead of the projected timeline. Positive progress indicator.",
+    acknowledged: false,
+    created_at: new Date().toISOString(),
+  },
+]
+
+
+// ── BRIEFINGS ────────────────────────────────────────────────────────────────
+export const MOCK_BRIEFINGS: Record<string, string> = {
+  s1:
+    "The biggest issue today is Zone B on level 3. Three different crews — electrical, plumbing, and framing — are all trying to work in the same area at the same time. It's packed. Workers can barely move through, and the conduit staged on the floor is blocking the walkway.\n\n" +
+    "Compared to yesterday, congestion in Zone B got worse. It was two trades yesterday, now it's three. Zone C near the crane also has a safety concern — two workers spotted without hard hats in the swing radius. This is the second day in a row.\n\n" +
+    "The good news: formwork removal on level 1 is running ahead of schedule. The east deck is clearing out faster than expected.\n\n" +
+    "Recommendation: Move the electrical crew in Zone B to the afternoon shift so they're not overlapping with framing. Address the hard hat issue in Zone C immediately — it's a repeat violation.",
+
+  s2:
+    "Work is moving steadily but there's a logistics problem on the south side. A lumber delivery got staged right across the main access road, which means equipment can't get to the west bay. This showed up between the morning and midday scans — it wasn't there earlier.\n\n" +
+    "The east bay has two trades sharing space (concrete and plumbing) but it's manageable for now. No safety flags today.\n\n" +
+    "Recommendation: Get the lumber restaged off the access road before the afternoon equipment run. If it stays, the west bay crew will be idle.",
+}
+
+
+// ── LIVE FEEDS ───────────────────────────────────────────────────────────────
+export const MOCK_FEEDS: FeedConfig[] = [
+  { id: "cam1", label: "Cam 1 — Crane Top",     site_id: "s1", site_name: "Riverside Tower",  worker: undefined,       type: "fixed",  auto_scan: false, scan_interval: 30 },
+  { id: "cam2", label: "Cam 2 — J. Martinez",   site_id: "s1", site_name: "Riverside Tower",  worker: "J. Martinez",  type: "helmet", auto_scan: false, scan_interval: 30 },
+  { id: "cam3", label: "Cam 3 — Level 3 East",  site_id: "s1", site_name: "Riverside Tower",  worker: undefined,       type: "fixed",  auto_scan: false, scan_interval: 30 },
+  { id: "cam4", label: "Cam 4 — R. Chen",       site_id: "s1", site_name: "Riverside Tower",  worker: "R. Chen",      type: "helmet", auto_scan: false, scan_interval: 30 },
+  { id: "cam5", label: "Cam 5 — South Gate",    site_id: "s2", site_name: "Harbor Warehouse", worker: undefined,       type: "fixed",  auto_scan: false, scan_interval: 30 },
+  { id: "cam6", label: "Cam 6 — T. Williams",   site_id: "s2", site_name: "Harbor Warehouse", worker: "T. Williams",  type: "helmet", auto_scan: false, scan_interval: 30 },
+]
+
+
+// ── ZONE DATA (by site) ─────────────────────────────────────────────────────
+export const MOCK_ZONES: Record<string, Zone[]> = {
+  s1: MOCK_SITES[0].zones,
+  s2: MOCK_SITES[1].zones,
+  s3: [],
+}
+
+
+// ── TIMELINE ENTRIES (by site) ───────────────────────────────────────────────
+export const MOCK_TIMELINE: Record<string, TimelineEntry[]> = {
+  s1: [
+    {
+      id: "tl_s1_1",
+      who: "J. Martinez",
+      timestamp: "2025-02-21T14:32:00Z",
+      source: "upload",
+      video: "zone_b_level3_pm.mp4",
+      action: "Uploaded afternoon footage of Level 3 East scaffolding",
+      ai_summary: "Zone B congestion worsened since morning. Electrical and framing crews now overlap with plumbing. Three blocked walkways detected. Recommend staggering electrical to 3pm start.",
+    },
+    {
+      id: "tl_s1_2",
+      who: "R. Chen",
+      timestamp: "2025-02-21T11:15:00Z",
+      source: "upload",
+      video: "crane_zone_c_morning.mp4",
+      action: "Uploaded crane swing zone footage — Zone C north exterior",
+      ai_summary: "Two workers without hard hats detected within crane radius for 4+ minutes. Same northeast corner as yesterday's flag. No other PPE violations in frame.",
+    },
+    {
+      id: "tl_s1_3",
+      who: "Site Manager",
+      timestamp: "2025-02-21T09:00:00Z",
+      source: "manual",
+      video: null,
+      action: "Electrical crew moved to afternoon shift per yesterday's recommendation",
+      ai_summary: null,
+    },
+    {
+      id: "tl_s1_4",
+      who: "J. Martinez",
+      timestamp: "2025-02-20T16:45:00Z",
+      source: "upload",
+      video: "level1_formwork_eod.mp4",
+      action: "End-of-day scan of Level 1 east deck formwork removal",
+      ai_summary: "Shoring 60% removed, ahead of schedule by approximately 1.5 days. No workers in hazard zone during removal. Staging area clear.",
+    },
+  ],
+  s2: [
+    {
+      id: "tl_s2_1",
+      who: "T. Williams",
+      timestamp: "2025-02-21T12:50:00Z",
+      source: "upload",
+      video: "south_access_midday.mp4",
+      action: "Uploaded south access road footage after midday delivery",
+      ai_summary: "Lumber staging confirmed across main vehicle corridor. Access road 80% blocked. Equipment unable to reach west bay. Delivery truck still on site.",
+    },
+    {
+      id: "tl_s2_2",
+      who: "Site Manager",
+      timestamp: "2025-02-21T08:30:00Z",
+      source: "manual",
+      video: null,
+      action: "Morning walkthrough — east bay concrete pour started on schedule",
+      ai_summary: null,
+    },
+  ],
+  s3: [],
+}
+
+// ── WORKERS (site roster for crew planning) ──────────────────────────────────
+interface MockWorker {
+  id: string
+  name: string
+  trade: string
+  site_id: string
+}
+
+export const MOCK_WORKERS: Record<string, MockWorker[]> = {
+  s1: [
+    { id: 'w_s1_01', name: 'M. Rivera',    trade: 'Concrete',   site_id: 's1' },
+    { id: 'w_s1_02', name: 'D. Nguyen',    trade: 'Concrete',   site_id: 's1' },
+    { id: 'w_s1_03', name: 'J. Brooks',    trade: 'Concrete',   site_id: 's1' },
+    { id: 'w_s1_04', name: 'P. Gutierrez', trade: 'Concrete',   site_id: 's1' },
+    { id: 'w_s1_05', name: 'S. Patel',     trade: 'Concrete',   site_id: 's1' },
+    { id: 'w_s1_06', name: 'K. Johnson',   trade: 'Electrical', site_id: 's1' },
+    { id: 'w_s1_07', name: 'R. Thompson',  trade: 'Electrical', site_id: 's1' },
+    { id: 'w_s1_08', name: 'A. Garcia',    trade: 'Electrical', site_id: 's1' },
+    { id: 'w_s1_09', name: 'L. Kim',       trade: 'Electrical', site_id: 's1' },
+    { id: 'w_s1_10', name: 'T. Davis',     trade: 'Electrical', site_id: 's1' },
+    { id: 'w_s1_11', name: 'F. Martinez',  trade: 'Plumbing',   site_id: 's1' },
+    { id: 'w_s1_12', name: 'B. Wilson',    trade: 'Plumbing',   site_id: 's1' },
+    { id: 'w_s1_13', name: 'C. Rodriguez', trade: 'Plumbing',   site_id: 's1' },
+    { id: 'w_s1_14', name: 'R. Chen',      trade: 'Framing',    site_id: 's1' },
+    { id: 'w_s1_15', name: 'J. Santos',    trade: 'Framing',    site_id: 's1' },
+    { id: 'w_s1_16', name: 'M. Baker',     trade: 'Framing',    site_id: 's1' },
+    { id: 'w_s1_17', name: 'D. Williams',  trade: 'Framing',    site_id: 's1' },
+    { id: 'w_s1_18', name: 'A. Lee',       trade: 'Framing',    site_id: 's1' },
+    { id: 'w_s1_19', name: 'E. Taylor',    trade: 'HVAC',       site_id: 's1' },
+    { id: 'w_s1_20', name: 'N. Hernandez', trade: 'HVAC',       site_id: 's1' },
+    { id: 'w_s1_21', name: 'P. Anderson',  trade: 'Crane Ops',  site_id: 's1' },
+    { id: 'w_s1_22', name: 'T. Williams',  trade: 'Delivery',   site_id: 's1' },
+    { id: 'w_s1_23', name: 'O. Jackson',   trade: 'Delivery',   site_id: 's1' },
+  ],
+  s2: [
+    { id: 'w_s2_01', name: 'V. Castro',   trade: 'Steel Erection', site_id: 's2' },
+    { id: 'w_s2_02', name: 'M. Okafor',   trade: 'Steel Erection', site_id: 's2' },
+    { id: 'w_s2_03', name: 'J. Park',     trade: 'Steel Erection', site_id: 's2' },
+    { id: 'w_s2_04', name: 'B. Singh',    trade: 'Steel Erection', site_id: 's2' },
+    { id: 'w_s2_05', name: 'L. Morales',  trade: 'Steel Erection', site_id: 's2' },
+    { id: 'w_s2_06', name: 'W. James',    trade: 'Concrete',       site_id: 's2' },
+    { id: 'w_s2_07', name: 'R. Patel',    trade: 'Concrete',       site_id: 's2' },
+    { id: 'w_s2_08', name: 'C. Kim',      trade: 'Concrete',       site_id: 's2' },
+    { id: 'w_s2_09', name: 'S. Martinez', trade: 'Plumbing',       site_id: 's2' },
+    { id: 'w_s2_10', name: 'A. Thompson', trade: 'Plumbing',       site_id: 's2' },
+    { id: 'w_s2_11', name: 'D. Lee',      trade: 'Plumbing',       site_id: 's2' },
+    { id: 'w_s2_12', name: 'H. Brown',    trade: 'Delivery',       site_id: 's2' },
+    { id: 'w_s2_13', name: 'E. White',    trade: 'Delivery',       site_id: 's2' },
+    { id: 'w_s2_14', name: 'G. Davis',    trade: 'Staging',        site_id: 's2' },
+  ],
+  s3: [
+    { id: 'w_s3_01', name: 'C. Nelson',  trade: 'Framing',  site_id: 's3' },
+    { id: 'w_s3_02', name: 'T. Green',   trade: 'Framing',  site_id: 's3' },
+    { id: 'w_s3_03', name: 'M. Clark',   trade: 'Framing',  site_id: 's3' },
+    { id: 'w_s3_04', name: 'J. Adams',   trade: 'Framing',  site_id: 's3' },
+    { id: 'w_s3_05', name: 'B. Turner',  trade: 'Cladding', site_id: 's3' },
+    { id: 'w_s3_06', name: 'S. Evans',   trade: 'Cladding', site_id: 's3' },
+    { id: 'w_s3_07', name: 'P. Cooper',  trade: 'Cladding', site_id: 's3' },
+    { id: 'w_s3_08', name: 'O. Murphy',  trade: 'Concrete', site_id: 's3' },
+  ],
+}
+
+// ── HELPER: check if backend is reachable ────────────────────────────────────
+
+let _backendAvailable: boolean | null = null
+
+export async function isBackendAvailable(): Promise<boolean> {
+  if (_backendAvailable !== null) return _backendAvailable
+  try {
+    const res = await fetch('/api/sites', { signal: AbortSignal.timeout(1500) })
+    _backendAvailable = res.ok
+  } catch {
+    _backendAvailable = false
+  }
+  return _backendAvailable
+}
+
+// ── WORKER HISTORY ────────────────────────────────────────────────────────────
+
+interface HistoryDay {
+  date: string
+  team_name: string
+  zone: string
+  task: string
+  alert_count: number
+  alerts: Array<{ id: string; severity: string; title: string; source_agent: string }>
+}
+
+interface WorkerSignals {
+  days_assigned: number
+  total_alerts: number
+  safety_alerts: number
+  productivity_alerts: number
+  flag: string
+}
+
+interface WorkerHistoryEntry {
+  worker: { id: string; name: string; trade: string; site_id: string }
+  history: HistoryDay[]
+  signals: WorkerSignals
+}
+
+function _isoDay(n: number): string {
+  const d = new Date(); d.setDate(d.getDate() - n)
+  return d.toISOString().split('T')[0]
+}
+
+export const MOCK_WORKER_HISTORY: Record<string, WorkerHistoryEntry> = {
+  'w_s1_06': {
+    worker: { id: 'w_s1_06', name: 'K. Johnson', trade: 'Electrical', site_id: 's1' },
+    history: [
+      { date: _isoDay(0), team_name: 'Electrical Team', zone: 'Zone B — Level 3 East Scaffolding', task: 'Panel installation', alert_count: 0, alerts: [] },
+      { date: _isoDay(1), team_name: 'Electrical Team', zone: 'Zone B — Level 3 East Scaffolding', task: 'Panel installation', alert_count: 0, alerts: [] },
+      { date: _isoDay(2), team_name: 'Electrical Team', zone: 'Zone E — Level 2 Interior',         task: 'Conduit run',        alert_count: 0, alerts: [] },
+      { date: _isoDay(3), team_name: 'Electrical Team', zone: 'Zone E — Level 2 Interior',         task: 'Conduit run',        alert_count: 0, alerts: [] },
+      { date: _isoDay(4), team_name: '',                zone: '',                                   task: '',                   alert_count: 0, alerts: [] },
+      { date: _isoDay(5), team_name: 'Electrical Team', zone: 'Zone B — Level 3 East Scaffolding', task: 'Rough-in wiring',    alert_count: 0, alerts: [] },
+      { date: _isoDay(6), team_name: 'Electrical Team', zone: 'Zone B — Level 3 East Scaffolding', task: 'Rough-in wiring',    alert_count: 0, alerts: [] },
+    ],
+    signals: { days_assigned: 6, total_alerts: 0, safety_alerts: 0, productivity_alerts: 0, flag: 'reward' },
+  },
+  'w_s1_14': {
+    worker: { id: 'w_s1_14', name: 'R. Chen', trade: 'Framing', site_id: 's1' },
+    history: [
+      { date: _isoDay(0), team_name: 'Framing Crew', zone: 'Zone C — North Exterior',           task: 'Sheathing',    alert_count: 1, alerts: [{ id: 'a_002', severity: 'high',   title: 'No hard hats near crane swing radius', source_agent: 'safety' }] },
+      { date: _isoDay(1), team_name: 'Framing Crew', zone: 'Zone C — North Exterior',           task: 'Sheathing',    alert_count: 1, alerts: [{ id: 'a_002', severity: 'high',   title: 'No hard hats near crane swing radius', source_agent: 'safety' }] },
+      { date: _isoDay(2), team_name: 'Framing Crew', zone: 'Zone B — Level 3 East Scaffolding', task: 'Wall framing', alert_count: 1, alerts: [{ id: 'a_001', severity: 'high',   title: '3 trades stacked in Zone B',          source_agent: 'productivity' }] },
+      { date: _isoDay(3), team_name: 'Framing Crew', zone: 'Zone B — Level 3 East Scaffolding', task: 'Wall framing', alert_count: 0, alerts: [] },
+      { date: _isoDay(4), team_name: '',              zone: '',                                   task: '',            alert_count: 0, alerts: [] },
+      { date: _isoDay(5), team_name: 'Framing Crew', zone: 'Zone C — North Exterior',           task: 'Layout',       alert_count: 0, alerts: [] },
+      { date: _isoDay(6), team_name: 'Framing Crew', zone: 'Zone C — North Exterior',           task: 'Layout',       alert_count: 0, alerts: [] },
+    ],
+    signals: { days_assigned: 6, total_alerts: 3, safety_alerts: 2, productivity_alerts: 1, flag: 'needs_training' },
+  },
+  'w_s1_05': {
+    worker: { id: 'w_s1_05', name: 'S. Patel', trade: 'Concrete', site_id: 's1' },
+    history: [
+      { date: _isoDay(0), team_name: 'Concrete Pour', zone: 'Zone A — Ground Level West', task: 'Foundation pour', alert_count: 0, alerts: [] },
+      { date: _isoDay(1), team_name: 'Concrete Pour', zone: 'Zone A — Ground Level West', task: 'Foundation pour', alert_count: 0, alerts: [] },
+      { date: _isoDay(2), team_name: '',               zone: '',                           task: '',               alert_count: 0, alerts: [] },
+      { date: _isoDay(3), team_name: '',               zone: '',                           task: '',               alert_count: 0, alerts: [] },
+      { date: _isoDay(4), team_name: 'Concrete Pour', zone: 'Zone A — Ground Level West', task: 'Slab work',      alert_count: 0, alerts: [] },
+      { date: _isoDay(5), team_name: 'Concrete Pour', zone: 'Zone A — Ground Level West', task: 'Slab work',      alert_count: 0, alerts: [] },
+      { date: _isoDay(6), team_name: '',               zone: '',                           task: '',               alert_count: 0, alerts: [] },
+    ],
+    signals: { days_assigned: 4, total_alerts: 0, safety_alerts: 0, productivity_alerts: 0, flag: 'neutral' },
+  },
+}

@@ -275,7 +275,43 @@ async def get_video_result(job_id: str) -> Optional[VideoProcessingResult]:
     rows = await _db_query(_query)
     if not rows:
         return None
-    return VideoProcessingResult(**rows[0]["data"])
+    row = rows[0]
+    data = row.get("data") if isinstance(row, dict) else None
+    if data is None:
+        logger.warning("video_results row for %s missing 'data' key — row keys: %s", job_id, list(row.keys()) if isinstance(row, dict) else type(row))
+        return None
+    return VideoProcessingResult(**data)
+
+
+async def get_video_result_for_site(site_id: str) -> Optional[VideoProcessingResult]:
+    """Return the most recent VideoProcessingResult for a site (any job_id)."""
+    sb = get_supabase()
+    if not sb:
+        storage = _get_storage()
+        for result in reversed(list(storage.VIDEO_RESULTS.values())):
+            if result.site_id == site_id:
+                return result
+        return None
+
+    def _query():
+        return (
+            sb.table("video_results")
+            .select("*")
+            .eq("site_id", site_id)
+            .order("job_id", desc=True)
+            .limit(1)
+            .execute()
+            .data
+        )
+
+    rows = await _db_query(_query)
+    if not rows:
+        return None
+    row = rows[0]
+    data = row.get("data") if isinstance(row, dict) else None
+    if data is None:
+        return None
+    return VideoProcessingResult(**data)
 
 
 async def save_video_result(job_id: str, site_id: str, result: VideoProcessingResult) -> None:
@@ -306,7 +342,12 @@ async def get_safety_report(site_id: str) -> Optional[SafetyReport]:
     rows = await _db_query(_query)
     if not rows:
         return None
-    return SafetyReport(**rows[0]["data"])
+    row = rows[0]
+    data = row.get("data") if isinstance(row, dict) else None
+    if data is None:
+        logger.warning("safety_reports row for %s missing 'data' key — row keys: %s", site_id, list(row.keys()) if isinstance(row, dict) else type(row))
+        return None
+    return SafetyReport(**data)
 
 
 async def save_safety_report(site_id: str, report: SafetyReport) -> None:

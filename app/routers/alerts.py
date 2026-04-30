@@ -7,7 +7,7 @@ from app.services import db
 
 router = APIRouter()
 
-_counter = 5  # seed data has 5 alerts
+_counter = 4  # seed data has 4 alerts
 
 
 @router.get("", response_model=list[Alert])

@@ -65,12 +65,7 @@ async def scan_feed(feed_id: str):
     if not feed:
         raise HTTPException(404, "Feed not found")
     # TODO: grab frame from feed, run abbreviated analysis
-    return LiveScanResult(
-        feed_id=feed_id,
-        frame_id="pending",
-        scan_text="Scan not implemented yet.",
-        scanned_at=datetime.now(timezone.utc),
-    )
+    raise HTTPException(501, "Live feed scan not yet implemented")
 
 
 @router.post("/feeds/{feed_id}/auto-scan")

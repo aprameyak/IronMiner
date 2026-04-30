@@ -41,4 +41,5 @@ async def get_violations(site_id: str, severity: str | None = None):
 @router.post("/analyze-frame")
 async def analyze_frame_safety(body: dict):
     # TODO: single-frame safety check
-    return {"status": "not implemented yet"}
+    from fastapi.responses import JSONResponse
+    return JSONResponse(status_code=501, content={"detail": "Single-frame safety analysis not yet implemented"})

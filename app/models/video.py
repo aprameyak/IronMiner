@@ -75,7 +75,7 @@ class EgressStatus(BaseModel):
     zone_id: str
     blocked: bool = False
     blocking_material: Optional[str] = None
-    emergency_access: bool = True  # is this an emergency vehicle lane
+    emergency_access: bool = False  # is this an emergency vehicle lane
 
 
 class MaterialStack(BaseModel):

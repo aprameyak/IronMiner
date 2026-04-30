@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException
 
@@ -15,9 +16,8 @@ async def list_sites(status: str | None = None):
 
 @router.post("", response_model=Site)
 async def create_site(body: SiteCreate):
-    # Generate an id — count existing sites for a simple incrementing id
-    existing = await db.get_sites()
-    site_id = f"s{len(existing) + 1}"
+    # Use a UUID-based ID to avoid collision on concurrent creates
+    site_id = f"s{uuid.uuid4().hex[:8]}"
     site = Site(id=site_id, name=body.name, address=body.address)
     return await db.create_site(site)
 
@@ -52,5 +52,10 @@ async def get_site_timeline(site_id: str):
     site = await db.get_site(site_id)
     if not site:
         raise HTTPException(404, "Site not found")
-    # TODO: return temporal analysis chain once video agent populates it
+    result = await db.get_video_result_for_site(site_id)
+    if result and result.temporal_chain:
+        return [
+            {"timestamp": i, "source": "agent", "action": entry}
+            for i, entry in enumerate(result.temporal_chain)
+        ]
     return []

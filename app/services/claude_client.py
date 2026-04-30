@@ -1,5 +1,6 @@
 """Claude API wrapper — ported from index.html callClaude()."""
 from __future__ import annotations
+import asyncio
 import anthropic
 from app.config import ANTHROPIC_API_KEY
 
@@ -18,5 +19,6 @@ async def call_claude(
     kwargs = dict(model=model, max_tokens=max_tokens, messages=messages)
     if system:
         kwargs["system"] = system
-    response = client.messages.create(**kwargs)
+    # Run the synchronous SDK call in a thread so the async event loop is not blocked
+    response = await asyncio.to_thread(client.messages.create, **kwargs)
     return response.content[0].text
