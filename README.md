@@ -1,135 +1,36 @@
-# IronSite Manager
+# IronMiner
 
-Spatial intelligence platform for construction site management. AI agents analyze job site video footage to detect congestion, safety violations, and productivity bottlenecks — then deliver plain-English briefings to non-technical site managers.
+![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB&style=for-the-badge)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white&style=for-the-badge)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white&style=for-the-badge)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white&style=for-the-badge)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white&style=for-the-badge)
+![LiveKit](https://img.shields.io/badge/LiveKit-DB0000?logo=livekit&logoColor=white&style=for-the-badge)
+![Android](https://img.shields.io/badge/Android-34A853?logo=android&logoColor=white&style=for-the-badge)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=for-the-badge)
 
-## The Problem
+## About
 
-Construction sites lose productivity when multiple trades compete for the same physical space. Current AI vision models can identify objects but fail at understanding spatial relationships — who's crowding whom, which zones are over-allocated, how patterns change over time.
+**IronMiner** is a spatial intelligence platform for construction site management built for UMD x IronSite 2026. Three AI agents — powered by the **Claude API** and GPU processing via Vast.ai — analyze job site video footage to detect congestion, safety violations, and productivity bottlenecks. The **React/TypeScript** frontend and **FastAPI** backend are complemented by an **Android** headset client for live worker streaming over **LiveKit**, with persistent data stored in **Supabase**.
 
-## What This Does
+## Features
 
-Three AI agents work together:
+- Video Agent ingests site footage, extracts frames, and runs spatial analysis via GPU (Vast.ai)
+- Safety Agent detects PPE non-compliance, zone violations, and blocked corridors
+- Productivity Agent scores congestion per zone, identifies trade overlap, and suggests resource reallocation
+- Review Mode: upload footage, receive AI briefings, browse zone congestion maps and alert feeds
+- Live Mode: monitor real-time camera feeds, communicate with workers, and receive instant alerts via WebSockets
+- Android headset client streams live video from workers using LiveKit audio/video
+- BIM-style zone overlay visualizes spatial layout directly in the dashboard
+- Teams board tracks worker assignments and pool allocation across active sites
 
-1. **Video Agent** — Ingests site footage, extracts frames, runs spatial analysis via GPU processing (vest.ai)
-2. **Safety Agent** — Analyzes for PPE compliance, zone adherence, blocked corridors
-3. **Productivity Agent** — Scores congestion per zone, detects trade overlap, suggests resource reallocation
+## Technology Stack
 
-Results flow into a dashboard with two modes:
-- **Review Mode** — Upload footage, get AI briefings, view zone congestion maps, browse alerts
-- **Live Mode** — Monitor camera feeds in real-time, talk to workers, get instant alerts
-
-## Tech Stack
-
-| Layer | Tech |
-|-------|------|
-| Frontend | React + Vite |
-| Backend | FastAPI (Python) |
-| AI | Claude API (vision + text) |
-| GPU Processing | Vast.ai |
-| Live Comms | WebSockets |
-
-## Quick Start
-
-### Prerequisites
-
-- Python 3.11 (VastAI currently requires `distutils`, which is not available in 3.12+)
-- Node.js 18+
-
-### Setup
-
-```bash
-# Clone
-git clone <repo-url> && cd ironminer
-
-# Python environment
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# Frontend dependencies
-cd gui && npm install && cd ..
-
-# Environment variables (optional — mock data works without these)
-cp .env.example .env
-```
-
-### Run
-
-The easiest way — start both servers at once:
-
-```bash
-./scripts/dev.sh
-```
-
-This launches:
-- **Backend** at `http://localhost:8000` (Swagger docs at `/docs`)
-- **Frontend** at `http://localhost:5173`
-
-Press `Ctrl+C` to stop both.
-
-Or run them separately:
-
-```bash
-# Terminal 1: Backend
-source .venv/bin/activate
-uvicorn app.main:app --reload --port 8000
-
-# Terminal 2: Frontend
-cd gui && npm run dev
-```
-
-The frontend proxies `/api` and `/ws` requests to the backend automatically (configured in `vite.config.js`), so no CORS issues in development.
-
-### Without the Backend
-
-The frontend works standalone — it falls back to built-in mock data and shows a yellow "DEMO DATA" badge. Useful for UI development without running the API.
-
-## Project Structure
-
-```
-ironminer/
-├── gui/                    React frontend (Vite)
-│   └── src/
-│       ├── api/            API client wrappers (one file per endpoint group)
-│       ├── components/     UI components (SiteCard, AlertCard, ZoneRow, etc.)
-│       ├── views/          Page-level views (ReviewMode, LiveMode)
-│       ├── hooks/          React hooks (useWebSocket, useSiteData)
-│       └── utils/          Colors, mock data, frame extraction helpers
-│
-├── app/                    FastAPI backend
-│   ├── main.py             App entry point — mounts all routers
-│   ├── models/             Pydantic schemas (Site, Alert, VideoJob, etc.)
-│   ├── routers/            API endpoints (sites, video, safety, productivity, alerts, streaming)
-│   ├── agents/             AI agent logic (video, safety, productivity)
-│   ├── services/           Shared services (Claude client, storage, job queue)
-│   └── ws/                 WebSocket connection manager
-│
-├── scripts/
-│   └── dev.sh              Start both servers with one command
-│
-└── requirements.txt        Python dependencies
-```
-
-## API Overview
-
-All endpoints are at `/api/*`. Full details in the Swagger docs at `http://localhost:8000/docs`.
-
-| Group | Prefix | Purpose |
-|-------|--------|---------|
-| Sites | `/api/sites` | Site CRUD, briefings, timelines |
-| Video | `/api/video` | Upload footage, track processing jobs |
-| Safety | `/api/safety` | Safety reports, violation lists |
-| Productivity | `/api/productivity` | Congestion zones, trade overlaps, suggestions |
-| Alerts | `/api/alerts` | Cross-site alert feed with acknowledgment |
-| Streaming | `/api/streaming` | Camera feeds, live scanning, WebSocket endpoints |
-
-## Contributing
-
-Each agent is independent. Pick your area and implement:
-
-- **Video Agent** → `app/agents/video_agent.py` + `app/routers/video.py`
-- **Safety Agent** → `app/agents/safety_agent.py` + `app/routers/safety.py`
-- **Productivity Agent** → `app/agents/productivity_agent.py` + `app/routers/productivity.py`
-- **Frontend** → `gui/src/`
-
-Agent stubs have TODO comments explaining what to build. Models in `app/models/` define the API contract — don't change the shapes without coordinating with the frontend.
+- **Frontend**: React, TypeScript, Vite
+- **Backend**: Python, FastAPI, WebSockets
+- **AI**: Claude API (vision + text), Vast.ai (GPU inference)
+- **Database**: Supabase (PostgreSQL)
+- **Live Comms**: LiveKit
+- **Mobile**: Android (Kotlin)
+- **Containerization**: Docker
