@@ -1,36 +1,110 @@
 # IronMiner
 
-![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB&style=for-the-badge)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white&style=for-the-badge)
-![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge)
-![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white&style=for-the-badge)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white&style=for-the-badge)
-![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white&style=for-the-badge)
-![LiveKit](https://img.shields.io/badge/LiveKit-DB0000?logo=livekit&logoColor=white&style=for-the-badge)
-![Android](https://img.shields.io/badge/Android-34A853?logo=android&logoColor=white&style=for-the-badge)
-![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=for-the-badge)
-
-## About
-
-**IronMiner** is a spatial intelligence platform for construction site management built for UMD x IronSite 2026. Three AI agents — powered by the **Claude API** and GPU processing via Vast.ai — analyze job site video footage to detect congestion, safety violations, and productivity bottlenecks. The **React/TypeScript** frontend and **FastAPI** backend are complemented by an **Android** headset client for live worker streaming over **LiveKit**, with persistent data stored in **Supabase**.
+IronMiner is a construction site dashboard for superintendents. It turns site walkthrough footage into zone-by-zone safety violations, congestion scores, and short written briefings, and adds live worker video, alerts, and crew assignment. It was built as a team project at the UMD x IronSite 2026 hackathon and is a prototype, not a production system.
 
 ## Features
 
-- Video Agent ingests site footage, extracts frames, and runs spatial analysis via GPU (Vast.ai)
-- Safety Agent detects PPE non-compliance, zone violations, and blocked corridors
-- Productivity Agent scores congestion per zone, identifies trade overlap, and suggests resource reallocation
-- Review Mode: upload footage, receive AI briefings, browse zone congestion maps and alert feeds
-- Live Mode: monitor real-time camera feeds, communicate with workers, and receive instant alerts via WebSockets
-- Android headset client streams live video from workers using LiveKit audio/video
-- BIM-style zone overlay visualizes spatial layout directly in the dashboard
-- Teams board tracks worker assignments and pool allocation across active sites
+- Safety Agent (`app/agents/safety_agent.py`): rule checks based on OSHA 29 CFR 1926 for PPE, fall protection, crane loads, hot work, blocked egress, and trade proximity. Detection is deterministic Python; an LLM only writes the summary.
+- Productivity Agent (`app/agents/productivity_agent.py`): scores congestion 1 to 5 per zone from worker density and trade count, flags trade overlaps, and generates rule-based suggestions plus an LLM-written briefing.
+- Team planner (`app/agents/team_planner_agent.py`): asks Claude to propose assignments of unassigned workers to teams, returned as JSON.
+- Live mode: LiveKit tokens and rooms for manager and worker video, WebSocket channels for alerts and pipeline progress, a browser worker simulator at `/worker`, and an Android headset client in `headset-client/`.
+- React dashboard with Review, Live, Teams, and Crew views and a 3D zone layout built with three.js.
 
-## Technology Stack
+## Current limitations
 
-- **Frontend**: React, TypeScript, Vite
-- **Backend**: Python, FastAPI, WebSockets
-- **AI**: Claude API (vision + text), Vast.ai (GPU inference)
-- **Database**: Supabase (PostgreSQL)
-- **Live Comms**: LiveKit
-- **Mobile**: Android (Kotlin)
-- **Containerization**: Docker
+- The Video Agent does not analyze uploaded video. It returns zone data from a matching JSON file in `demo_assets/` if one exists, otherwise a fixed set of five hand-written zones based on a cached Twelve Labs Pegasus summary (`app/summarizer/summary.txt`). The upload is only used to cut thumbnail chunks.
+- Vast.ai GPU inference (`app/services/vastai_client.py`, `scripts/remote_inference.py`) is not wired into the upload pipeline.
+- Team benchmark evaluation uses embedding similarity if `sentence-transformers` is installed, and otherwise falls back to keyword (Jaccard) overlap in `app/agents/keyword_evaluator.py`.
+- The frontend falls back to mock data in `gui/src/utils/mockData.ts` when API calls fail, and several components read from it directly.
+- Single-frame safety analysis and live feed scanning return HTTP 501.
+- Without Supabase, data is held in memory and lost on restart.
+- `app/services/storage.py` and the tests import `app/data/mock_video_results.py`, which is excluded by `.gitignore` and is not in the repository. The backend and tests will not start from a fresh clone until that module is restored.
+
+## Tech stack
+
+- Backend: Python 3.11, FastAPI, WebSockets, Pydantic
+- LLM: Ollama (default) or the Claude API for summaries; Claude for team planning
+- Frontend: React 18, TypeScript, Vite, three.js via react-three-fiber, dnd-kit
+- Realtime video: LiveKit (server in Docker, client SDKs in web and Android)
+- Storage: Supabase (optional) with in-memory fallback
+- Android headset client: Kotlin, LiveKit Android SDK
+
+## Getting started
+
+Prerequisites: Python 3.11, Node 20, Docker, and either Ollama or an Anthropic API key.
+
+Environment variables are listed in `.env.example` (backend) and `gui/.env.example` (frontend). Copy them to `.env` and `gui/.env`.
+
+- Backend: `ANTHROPIC_API_KEY`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`, `LIVEKIT_HOST`, `LIVEKIT_PUBLIC_WS_URL`, `LLM_PROVIDER`, `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `SUPABASE_URL`, `SUPABASE_KEY`, `VASTAI_API_KEY`, `VASTAI_BASE_URL`, `VASTAI_INSTANCE_ID`, `VASTAI_MODEL_ID`
+- Frontend: `VITE_API_URL`, `VITE_LIVEKIT_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_KEY`
+
+Install:
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cd gui && npm install
+```
+
+`requirements.txt` does not list every package the code imports. Depending on which features you use you may also need `anthropic`, `supabase`, `av`, `numpy`, `pytest`, and for the optional paths `tenacity`, `vastai-sdk`, and `sentence-transformers`.
+
+Run everything (LiveKit, Redis, and Ollama via `docker-compose.yml`, then the backend on port 8000 and Vite on port 5173):
+
+```bash
+./scripts/dev.sh
+```
+
+Or run the pieces yourself:
+
+```bash
+docker-compose up -d
+uvicorn app.main:app --reload --port 8000
+cd gui && npm run dev
+```
+
+API docs are served at `http://localhost:8000/docs`.
+
+Tests (deterministic Safety Agent rule checks, no network or LLM):
+
+```bash
+pytest app/tests
+```
+
+## How it works
+
+1. `POST /api/video/upload` (`app/routers/video.py`) saves the file and runs the Video Agent, which produces a `VideoProcessingResult` of zones, workers, PPE, hazards, and egress paths (see Current limitations for where that data comes from).
+2. The Safety and Productivity agents run on that result. Each does its analysis in plain Python, then calls `app/services/llm_client.py` (Ollama CLI or Claude, chosen by `LLM_PROVIDER`) for a short summary. If the LLM call fails, a templated summary is used.
+3. Progress and alerts are pushed to the dashboard over WebSockets (`app/ws/manager.py`, `app/routers/streaming.py`).
+4. `app/services/db.py` reads and writes Supabase when configured and falls back to in-memory dicts in `app/services/storage.py`. Workers and teams persist to JSON files under `data/` (`app/services/team_service.py`).
+5. `app/services/livekit_service.py` issues LiveKit access tokens for managers and workers.
+
+## Project structure
+
+```
+app/
+  agents/        video, safety, productivity, team planner, evaluators
+  routers/       sites, video, safety, productivity, alerts, streaming, workers, teams
+  services/      LLM clients, LiveKit, Supabase, storage, Vast.ai, job queue
+  models/        Pydantic schemas
+  summarizer/    Twelve Labs Pegasus script and cached summary
+  tests/         pytest tests for the Safety Agent
+gui/src/
+  views/         Review, Live, Teams, Crew, WorkerSimulator
+  components/    panels, BIM zone view, team board, live stream grid
+  api/           backend client functions
+headset-client/  Android app that streams a worker's camera to LiveKit
+demo_assets/     canned zone JSON for demo uploads
+scripts/         dev.sh, Supabase seeding, remote inference
+```
+
+## Credits
+
+Built by a team at UMD x IronSite 2026. The code was pushed to this repository by aprameyak, so the commit history does not show the other team members' individual contributions.
+
+## Contributing
+
+Issues and pull requests are welcome. Before opening a PR, run `pytest app/tests` and `npm run build` in `gui/`. CI (`.github/workflows/ci.yml`) installs `requirements.txt` and builds the frontend.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
