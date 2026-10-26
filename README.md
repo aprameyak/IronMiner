@@ -70,6 +70,30 @@ Tests (deterministic Safety Agent rule checks, no network or LLM):
 pytest app/tests
 ```
 
+## Usage
+
+With the backend on port 8000, upload a walkthrough video. The response is a `VideoJob`; the Video, Safety, and Productivity agents then run in the background.
+
+```bash
+curl -F "file=@site_walkthrough.mp4" -F "site_id=s1" http://localhost:8000/api/video/upload
+```
+
+Naming the file `site_walkthrough.mp4` makes the Video Agent load `demo_assets/site_walkthrough.json`. Then read the reports for that site:
+
+```bash
+curl http://localhost:8000/api/safety/report/s1
+curl "http://localhost:8000/api/safety/report/s1/violations?severity=high"
+curl http://localhost:8000/api/productivity/report/s1/zones
+```
+
+Ask Claude to fill empty teams for a site (requires `ANTHROPIC_API_KEY`):
+
+```bash
+curl -X POST "http://localhost:8000/api/teams/auto-assign?site_id=s1"
+```
+
+In the browser, open `http://localhost:5173` for the dashboard and `http://localhost:5173/worker` for the worker simulator.
+
 ## How it works
 
 1. `POST /api/video/upload` (`app/routers/video.py`) saves the file and runs the Video Agent, which produces a `VideoProcessingResult` of zones, workers, PPE, hazards, and egress paths (see Current limitations for where that data comes from).
