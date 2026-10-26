@@ -121,10 +121,6 @@ demo_assets/     canned zone JSON for demo uploads
 scripts/         dev.sh, Supabase seeding, remote inference
 ```
 
-## Credits
-
-Built by a team at UMD x IronSite 2026. The code was pushed to this repository by aprameyak, so the commit history does not show the other team members' individual contributions.
-
 ## Contributing
 
 Issues and pull requests are welcome. Before opening a PR, run `pytest app/tests` and `npm run build` in `gui/`. CI (`.github/workflows/ci.yml`) installs `requirements.txt` and builds the frontend.
