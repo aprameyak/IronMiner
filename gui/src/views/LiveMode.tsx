@@ -196,11 +196,6 @@ export default function LiveMode() {
               background: '#080B10', border: '1px solid rgba(255,255,255,0.06)',
               position: 'relative', marginBottom: 12,
             }}>
-              <div style={{
-                position: 'absolute', inset: 0, pointerEvents: 'none',
-                backgroundImage: 'radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)',
-                backgroundSize: '24px 24px',
-              }} />
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
                 <div style={{ width: 40, height: 40, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">

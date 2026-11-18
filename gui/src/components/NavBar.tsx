@@ -17,7 +17,7 @@ export default function NavBar({ mode, setMode, urgentCount }: NavBarProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{
             width: 36, height: 36, borderRadius: 8,
-            background: 'linear-gradient(135deg, #F97316, #EA580C)',
+            background: '#EA580C',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontWeight: 800, fontSize: 14, color: '#fff',
             boxShadow: '0 4px 16px rgba(249,115,22,0.25)',

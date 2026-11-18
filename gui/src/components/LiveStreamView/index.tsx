@@ -111,9 +111,8 @@ export default function LiveStreamView({
         background: C.surface, position: 'relative', marginBottom: 16,
         transition: 'border-color 0.3s',
       }}>
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', background: 'repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255,255,255,0.01) 1px, rgba(255,255,255,0.01) 2px)' }} />
 
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 2, padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(rgba(0,0,0,0.7), transparent)' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 2, padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.55)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444', animation: 'pulse 1.5s infinite' }} />
             <span style={{ fontSize: 11, fontWeight: 700, fontFamily: 'var(--mono)', color: '#FCA5A5', letterSpacing: '0.1em' }}>LIVE</span>
@@ -155,7 +154,7 @@ export default function LiveStreamView({
               opacity: roomName ? 1 : 0.4,
               cursor: roomName ? 'pointer' : 'not-allowed',
               color: '#fff',
-              background: roomName ? 'linear-gradient(135deg, #F97316, #EA580C)' : 'rgba(255,255,255,0.06)',
+              background: roomName ? '#EA580C' : 'rgba(255,255,255,0.06)',
             }}
           >
             {iconConnect}

@@ -178,7 +178,7 @@ export default function WorkerSimulator() {
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#EF4444', animation: 'pulse 1.5s infinite' }} />
               <span style={{ fontSize: 9, fontWeight: 700, fontFamily: 'var(--mono)', color: '#FCA5A5', letterSpacing: '0.1em' }}>LIVE</span>
             </div>
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '8px 12px', background: 'linear-gradient(transparent, rgba(0,0,0,0.85))', fontSize: 12, color: '#64748B' }}>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '8px 12px', background: 'rgba(0,0,0,0.6)', fontSize: 12, color: '#64748B' }}>
               Streaming to dashboard — manager can see this feed
             </div>
           </div>
@@ -256,7 +256,7 @@ export default function WorkerSimulator() {
             disabled={!selectedWorkerId || status === 'connecting'}
             style={{
               padding: '14px', borderRadius: 10, border: 'none',
-              background: (!selectedWorkerId || status === 'connecting') ? 'rgba(34,197,94,0.3)' : 'linear-gradient(135deg, #22C55E, #16A34A)',
+              background: (!selectedWorkerId || status === 'connecting') ? 'rgba(34,197,94,0.3)' : '#16A34A',
               color: '#fff', fontSize: 15, fontWeight: 700,
               cursor: (!selectedWorkerId || status === 'connecting') ? 'not-allowed' : 'pointer',
               marginTop: 4, fontFamily: 'inherit',

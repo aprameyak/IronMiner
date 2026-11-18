@@ -198,7 +198,7 @@ export default function TeamsMode() {
             </button>
             <button
               onClick={handleCreateTeam}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 10, background: 'linear-gradient(135deg, #F97316, #EA580C)', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#fff', boxShadow: '0 4px 16px rgba(249,115,22,0.3)', transition: 'opacity 0.15s' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 10, background: '#EA580C', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#fff', boxShadow: '0 4px 16px rgba(249,115,22,0.3)', transition: 'opacity 0.15s' }}
             >
               <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> New Team
             </button>

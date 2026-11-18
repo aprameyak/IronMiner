@@ -128,13 +128,13 @@ export default function SiteBIMView({ zones, siteId, onSelectZone }: SiteBIMView
         borderRadius: 14,
         overflow: 'hidden',
         border: '1px solid rgba(255,255,255,0.06)',
-        background: 'radial-gradient(ellipse at 30% 40%, #0d1b2e 0%, #050709 100%)',
+        background: '#0a1220',
       }}>
         {/* Header bar */}
         <div style={{
           position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10,
           padding: '12px 16px',
-          background: 'linear-gradient(rgba(0,0,0,0.65), transparent)',
+          background: 'rgba(0,0,0,0.55)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           pointerEvents: 'none',
         }}>

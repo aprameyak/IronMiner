@@ -44,7 +44,7 @@ export default function LiveWorkerFeedCard({ identity, participant, videoTrack, 
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#22C55E' }} />
         <span style={{ fontSize: 8, fontWeight: 700, color: '#86EFAC', fontFamily: 'var(--mono)' }}>LIVE</span>
       </div>
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '6px 8px', background: 'linear-gradient(transparent, rgba(0,0,0,0.9))' }}>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '6px 8px', background: 'rgba(0,0,0,0.6)' }}>
         <div style={{ fontSize: 11, fontWeight: 600, color: '#E2E8F0' }}>{displayName}</div>
       </div>
     </button>

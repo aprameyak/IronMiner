@@ -66,7 +66,7 @@ export default function WorkerVideoTile({ identity, participant, videoTrack, aud
         </div>
       )}
 
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '8px 10px', background: 'linear-gradient(transparent, rgba(0,0,0,0.85))' }}>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '8px 10px', background: 'rgba(0,0,0,0.6)' }}>
         <div style={{ fontSize: 12, fontWeight: 600, color: C.text }}>{displayName}</div>
         <div style={{ fontSize: 10, color: C.muted }}>Helmet Cam</div>
       </div>
